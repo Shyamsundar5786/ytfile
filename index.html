@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Player</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #282c35;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #videoContainer {
+            position: relative;
+            width: 640px;
+            height: 360px;
+            cursor: pointer;
+        }
+
+        #player {
+            width: 100%;
+            height: 100%;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            background-color: #000;
+            color: #fff;
+            transition: opacity 0.3s ease;
+        }
+
+        #overlay:hover {
+            opacity: 0.5;
+        }
+
+        #playButton {
+            font-size: 48px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #loadingSpinner {
+            display: none;
+            font-size: 24px;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        #videoInfo {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000;
+            padding: 10px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        #videoTitle {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        #videoDescription {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="videoContainer">
+    <div id="overlay" onclick="toggleVideo()">
+        <div id="playButton">▶</div>
+        <div id="loadingSpinner">Loading...</div>
+    </div>
+    <div id="player"></div>
+</div>
+
+<div id="videoInfo">
+    <div id="videoTitle">Video Title</div>
+    <div id="videoDescription">Video Description</div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    var apiKey = 'AIzaSyDBmIFAm2DIpQ2QxwkYujchO_9DjBV-TL8';
+    var videoId = 'edUP_MWvkVw?feature=share';
+
+    var player;
+    var overlay = document.getElementById('overlay');
+    var loadingSpinner = document.getElementById('loadingSpinner');
+    var videoTitle = document.getElementById('videoTitle');
+    var videoDescription = document.getElementById('videoDescription');
+
+    var playerConfig = {
+        height: '360',
+        width: '640',
+        videoId: videoId,
+        playerVars: {
+            'controls': 1,
+            'fs': 0
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    };
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', playerConfig);
+    }
+
+    function onPlayerReady(event) {
+        overlay.style.display = 'flex';
+        loadingSpinner.style.display = 'none';
+
+        
+        videoTitle.innerText = 'Awesome Video Title';
+        videoDescription.innerText = 'This is an amazing video description.';
+
+        
+        overlay.style.opacity = '0.8';
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+            overlay.style.display = 'none';
+        } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+            overlay.style.display = 'flex';
+        }
+    }
+
+    function toggleVideo() {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+            player.pauseVideo();
+        } else {
+            player.playVideo();
+        }
+    }
+</script>
+
+</body>
+</html>
